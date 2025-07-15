@@ -5,6 +5,7 @@ from evaluate import load
 from tqdm import tqdm
 import librosa
 import re
+import os
 
 ## https://github.com/Natural-Language-Processing-Elm/open_universal_arabic_asr_leaderboard/blob/main/models/whisper.py
 def normalize_arabic_text(text):
@@ -113,4 +114,13 @@ for d in dialects:
     all_references_norm = [normalize_arabic_text(text) for text in all_references]
     wer = 100 * wer_metric.compute(predictions=all_transcriptions_norm, references=all_references_norm)
     print(f"{d} - Word Error Rate (WER): {wer:.2f}%")
+    
+    res_dir = "./results/"
+    os.makedirs(res_dir,exist_ok=True)
+    with open(f"prediction_{d.lower()}.txt", "w", encoding="utf-8") as f:
+        for ref ,pred in tqdm(zip(all_references,all_transcriptions)):
+            #item={"text":ref,"pred_text":pred}
+            #item = json.dumps(item, ensure_ascii=False)
+            f.write(pred)
+            f.write("\n")
 
